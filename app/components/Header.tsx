@@ -15,7 +15,7 @@ export default async function Header() {
           {!user && (
             <Link
               href={signInUrl}
-              className="bg-gray-200 font-serif py-2 px-2 md:px-4 rounded"
+              className="bg-gray-200  font-serif py-2 px-2 md:px-4 rounded"
             >
               Login
             </Link>
@@ -29,15 +29,15 @@ export default async function Header() {
             >
               <button
                 type="submit"
-                className="bg-gray-200 font-serif py-2 px-2 md:px-4 rounded"
+                className="bg-gray-200 text-sm sm:text-lg font-serif py-2 px-2 md:px-4 rounded"
               >
                 LogOut
               </button>
             </form>
           )}
           <Link
-            href={"/new-listing"}
-            className="bg-[#FF5722]  font-serif py-2 px-2 md:px-4 rounded"
+            href={"new-job"}
+            className="bg-[#FF5722] text-sm sm:text-lg font-serif py-2 px-2 md:px-4 rounded"
           >
             Post a Job
           </Link>
