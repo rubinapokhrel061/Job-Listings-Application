@@ -35,14 +35,14 @@ export default function JobList() {
     },
   ];
   return (
-    <div className="py-8 my-4 grow bg-[#eef2f5] rounded-lg min-h-[300px]">
-      <h1 className="mx-4 font-bold">Recent Jobs..</h1>
+    <div className="py-8 my-4 grow bg-[#eef2f5]  rounded-lg min-h-[300px]">
+      <h1 className="mx-4 md:m-6 font-bold">Recent Jobs..</h1>
       {joblist.map((job, index) => {
         return (
           <Link
             href={""}
             key={index}
-            className="bg-white  flex m-4 flex-col md:flex-row justify-between gap-4 rounded-lg p-4 text-gray-700 shadow hover:shadow-sm"
+            className="bg-white  flex m-4 md:m-6 flex-col md:flex-row justify-between gap-4 rounded-lg p-4 text-gray-700 shadow hover:shadow-sm"
           >
             <div className="flex">
               <div className="relative h-20 w-20  m-1 overflow-hidden rounded-lg order-2 md:order-1">
@@ -52,7 +52,7 @@ export default function JobList() {
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="flex flex-col grow space-y-3 md:space-y-0 justify-between order-1 md:order-2">
+              <div className="flex flex-col grow space-y-1 pt-1 md:space-y-0 justify-between order-1 md:order-2">
                 <h3 className="text-base text-gray-800">{job.company}</h3>
                 <h6 className="text-lg md:text-2xl text-[#FF5722] font-semibold sm:text-xl">
                   {job.position}

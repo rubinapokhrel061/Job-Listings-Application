@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+import { AuthKitProvider } from "@workos-inc/authkit-nextjs";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -31,9 +31,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased *:font-serif text-[#212529] `}
       >
         <main className=" py-6 px-6 min-h-screen container mx-auto">
-          <Header />
-          {children}
-          <Footer />
+          <AuthKitProvider>
+            <Header />
+
+            {children}
+            <Footer />
+          </AuthKitProvider>
         </main>
       </body>
     </html>

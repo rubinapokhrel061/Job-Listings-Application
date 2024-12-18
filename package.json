@@ -13,9 +13,15 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
-    "next": "15.1.0",
+    "@reduxjs/toolkit": "^2.5.0",
+    "@workos-inc/authkit-nextjs": "^0.16.2",
+    "@workos-inc/node": "^7.35.1",
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.9.1",
+    "next": "^15.1.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

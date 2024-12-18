@@ -1,7 +1,8 @@
+"use client";
 import SearchIcon from "@mui/icons-material/Search";
 export default function HeroSec() {
   return (
-    <section className="pt-20">
+    <section className="pt-20 pb-6">
       <div className="text-3xl p-2 md:text-4xl font-bold text-center">
         Find Your Next <br />
         <span className="text-[#FF5722] pt-2">Dream Job...</span>
