@@ -27,11 +27,12 @@ export default function CreateNewJob() {
     jobPosition: "",
     location: "",
     salary: "",
-    experience: "entry",
-    jobType: "fullTime",
+    experience: "Entry-Level",
+    jobType: "Full-Time",
     jobMode: "onsite",
     deadline: new Date(),
     description: "",
+    requirements: "",
     createdBy: user ? user : { userName: "", userId: "", userEmail: "" },
   });
 
@@ -45,15 +46,6 @@ export default function CreateNewJob() {
     }
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        createdBy: user,
-      }));
-    }
-  }, [user]);
-
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -63,7 +55,29 @@ export default function CreateNewJob() {
       [name]: value,
     }));
   };
-
+  console.log(companyLogoUrl);
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        createdBy: user,
+      }));
+    }
+    if (companyLogoUrl) {
+      setFormData((prev) => ({
+        ...prev,
+        companyLogo: companyLogoUrl,
+      }));
+    }
+  }, [user, companyLogoUrl]);
+  const handleUploadSuccess = ({ info }: { info: CloudinaryResponse }) => {
+    if (info && info?.secure_url) {
+      setCompanyLogoUrl(info?.secure_url);
+      setCompanyLogoName(
+        info?.display_name ? `${info?.display_name}.${info?.format}` : ""
+      );
+    }
+  };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -80,30 +94,19 @@ export default function CreateNewJob() {
       jobPosition: "",
       location: "",
       salary: "",
-      experience: "entry",
-      jobType: "fullTime",
+      experience: "Entry-Level",
+      jobType: "Full-Time",
       jobMode: "onsite",
       deadline: new Date(),
       description: "",
+      requirements: "",
       createdBy: user ? user : { userName: "", userId: "", userEmail: "" },
     });
     setCompanyLogoUrl("");
     setCompanyLogoName("");
   };
 
-  const handleDeleteLogo = () => {
-    setCompanyLogoUrl("");
-    setCompanyLogoName("");
-  };
-  const handleUploadSuccess = ({ info }: { info: CloudinaryResponse }) => {
-    if (info && info.secure_url !== companyLogoUrl) {
-      setCompanyLogoUrl(info.secure_url);
-      setCompanyLogoName(
-        info.display_name ? `${info.display_name}.${info.format}` : ""
-      );
-    }
-  };
-
+  console.log(formData);
   return (
     <div className="overflow-y-auto flex items-center justify-center py-6 min-h-screen">
       {!user ? (
@@ -246,9 +249,9 @@ export default function CreateNewJob() {
                   onChange={handleInputChange}
                   className="w-full px-1 py-3 mt-1 border border-gray-400 rounded-lg outline-none focus:border-gray-600"
                 >
-                  <option value="entry">Entry-Level</option>
-                  <option value="mid">Mid-Level</option>
-                  <option value="senior">Senior-Level</option>
+                  <option value="Entry-Level">Entry-Level</option>
+                  <option value="Mid-Level">Mid-Level</option>
+                  <option value="Senior-Level">Senior-Level</option>
                 </select>
               </div>
 
@@ -266,9 +269,9 @@ export default function CreateNewJob() {
                   onChange={handleInputChange}
                   className="w-full px-1 py-3 mt-1 border border-gray-400 rounded-lg outline-none focus:border-gray-600"
                 >
-                  <option value="fullTime">Full-Time</option>
-                  <option value="partTime">Part-Time</option>
-                  <option value="contract">Contract</option>
+                  <option value="Full-Time">Full-Time</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Contract">Contract</option>
                 </select>
               </div>
 
@@ -321,6 +324,22 @@ export default function CreateNewJob() {
                 id="description"
                 name="description"
                 value={formData.description}
+                onChange={handleInputChange}
+                className="w-full px-2 py-2 mt-1 border border-gray-400 rounded-lg outline-none focus:border-gray-600"
+                required
+              ></textarea>
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="requirements"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Job Requirements
+              </label>
+              <textarea
+                id="requirements"
+                name="requirements"
+                value={formData.requirements}
                 onChange={handleInputChange}
                 className="w-full px-2 py-2 mt-1 border border-gray-400 rounded-lg outline-none focus:border-gray-600"
                 required

@@ -1,7 +1,28 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { JobList } from "../globals/types";
 
-const JobSchema = new Schema<JobList>(
+interface CreatedBy {
+  userName: string;
+  userId: string;
+  userEmail: string;
+}
+
+interface Job extends Document {
+  companyName: string;
+  companyWebsite?: string;
+  companyLogo?: string;
+  jobPosition: string;
+  location: string;
+  salary?: string;
+  experience: "Entry-Level" | "Mid-Level" | "Senior-Level";
+  jobType: "Full-Time" | "Part-Time" | "Contract";
+  jobMode: "onsite" | "hybrid" | "remote";
+  deadline: Date;
+  description: string;
+  createdBy: CreatedBy;
+  requirements: string;
+}
+
+const JobSchema = new Schema<Job>(
   {
     companyName: {
       type: String,
@@ -37,12 +58,12 @@ const JobSchema = new Schema<JobList>(
     },
     experience: {
       type: String,
-      enum: ["entry", "mid", "senior"],
+      enum: ["Entry-Level", "Mid-Level", "Senior-Level"],
       required: true,
     },
     jobType: {
       type: String,
-      enum: ["fullTime", "partTime", "contract"],
+      enum: ["Full-Time", "Part-Time", "Contract"],
       required: true,
     },
     jobMode: {
@@ -55,6 +76,11 @@ const JobSchema = new Schema<JobList>(
       required: true,
     },
     description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    requirements: {
       type: String,
       required: true,
       trim: true,
@@ -83,4 +109,4 @@ const JobSchema = new Schema<JobList>(
   { timestamps: true }
 );
 
-export default mongoose.model<JobList>("Job", JobSchema);
+export default mongoose.model<Job>("Job", JobSchema);

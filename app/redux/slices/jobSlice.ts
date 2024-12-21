@@ -44,3 +44,27 @@ export function addJob(formData: JobList) {
     }
   };
 }
+export function fetchJobs() {
+  return async function fetchJobsThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
+
+    try {
+      const response = await API.get("api/jobs");
+      console.log(response);
+
+      if (response.status === 200 && response.data) {
+        const jobs = response.data.jobs;
+        dispatch(setStatus(Status.SUCCESS));
+        dispatch(setJobs(jobs));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+        toast.error("Failed to fetch jobs.");
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}

@@ -6,17 +6,19 @@ export interface CreatedBy {
 }
 
 export interface JobList {
+  _id?: string;
   companyName: string;
   companyWebsite?: string;
   companyLogo?: string;
   jobPosition: string;
   location: string;
   salary?: string;
-  experience: "entry" | "mid" | "senior";
-  jobType: "fullTime" | "partTime" | "contract";
+  experience: "Entry-Level" | "Mid-Level" | "Senior-Level";
+  jobType: "Full-Time" | "Part-Time" | "Contract";
   jobMode: "onsite" | "hybrid" | "remote";
   deadline: Date;
   description: string;
+  requirements: string;
   createdBy: CreatedBy;
 }
 
