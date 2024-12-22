@@ -32,16 +32,16 @@ export default function Header() {
           {!user && (
             <Link
               href={signInUrl}
-              className="bg-gray-200 font-serif py-2 px-2 md:px-4 rounded"
+              className="bg-white rounded-full shadow-lg hover:text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-2 md:px-4"
             >
-              Login
+              LogIn
             </Link>
           )}
           {user && (
             <form action={() => signOut()}>
               <button
                 type="submit"
-                className="bg-gray-200 text-sm sm:text-lg font-serif py-2 px-2 md:px-4 rounded"
+                className="bg-gray-200 rounded-full shadow-lg text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-2 md:px-4 "
               >
                 LogOut
               </button>
@@ -49,7 +49,7 @@ export default function Header() {
           )}
           <Link
             href={"/views/new-job"}
-            className="bg-[#FF5722] text-sm sm:text-lg font-serif py-2 px-2 md:px-4 rounded"
+            className="bg-[#FF5722] rounded-full shadow-lg text-sm sm:text-lg font-serif py-2 px-2 md:px-4 "
           >
             Post a Job
           </Link>

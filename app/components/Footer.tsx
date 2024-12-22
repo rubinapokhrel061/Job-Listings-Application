@@ -1,8 +1,9 @@
 "use client";
 export default function Footer() {
   return (
-    <footer className="container text-[#FF5722] items-center flex justify-center py-4">
-      Job Board &copy; 2024-All rights reserved.
+    <footer className="container border-t border-t-[#FF5722] text-sm sm:text-lg items-center flex justify-center py-4">
+      <p className="text-[#FF5722]">Job Board </p> &copy; 2024-All rights
+      reserved.
     </footer>
   );
 }

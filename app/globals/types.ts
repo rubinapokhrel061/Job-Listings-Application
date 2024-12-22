@@ -1,10 +1,21 @@
-import { Status } from "./status"; // Ensure this import is correct
+import { Status } from "./status";
 export interface CreatedBy {
   userName: string;
   userId: string;
   userEmail: string;
 }
-
+export interface jobdetails {
+  jobPosition: string;
+  jobId: string | undefined;
+  companyName: string;
+}
+export interface applyForm {
+  fullName: string;
+  email: string;
+  resume: string;
+  coverletter: string;
+  jobDetails: jobdetails;
+}
 export interface JobList {
   _id?: string;
   companyName: string;
@@ -24,5 +35,11 @@ export interface JobList {
 
 export interface JobState {
   jobs: JobList[];
-  status: Status; // Assuming Status is an enum or type
+  status: Status;
+  singleJob: JobList | null;
+}
+
+export interface JobApplyState {
+  jobApply: applyForm[];
+  status: Status;
 }

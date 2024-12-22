@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased *:font-serif text-[#212529]`}
       >
-        <main className="py-6 px-6 min-h-screen container mx-auto">
+        <main className="py-6 px-3 sm:px-6 min-h-screen container mx-auto">
           <Provider store={store}>
             <AuthKitProvider>
               <ToastContainer />

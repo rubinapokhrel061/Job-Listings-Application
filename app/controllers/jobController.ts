@@ -32,7 +32,9 @@ export const createJob = async (req: Request) => {
       !jobMode ||
       !deadline ||
       !description ||
-      !createdBy
+      !createdBy ||
+      !companyLogo ||
+      !requirements
     ) {
       return NextResponse.json(
         { message: "All fields are required!" },

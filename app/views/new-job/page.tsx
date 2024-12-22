@@ -4,6 +4,7 @@ import { CldUploadWidget } from "next-cloudinary";
 import { CreatedBy, JobList } from "@/app/globals/types";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { addJob } from "@/app/redux/slices/jobSlice";
+import { FiLock } from "react-icons/fi";
 
 interface CloudinaryResponse {
   secure_url: string;
@@ -18,7 +19,6 @@ export default function CreateNewJob() {
   const [companyLogoName, setCompanyLogoName] = useState<string>("");
   const [companyLogoUrl, setCompanyLogoUrl] = useState<string>("");
   const [user, setUser] = useState<CreatedBy | null>(null);
-  const userDetail = localStorage.getItem("user");
 
   const [formData, setFormData] = useState<JobList>({
     companyName: "",
@@ -106,12 +106,19 @@ export default function CreateNewJob() {
     setCompanyLogoName("");
   };
 
-  console.log(formData);
   return (
     <div className="overflow-y-auto flex items-center justify-center py-6 min-h-screen">
       {!user ? (
-        <div className="text-2xl font-semibold text-[#FF5722]">
-          You need to be logged in to post a job
+        <div className="flex flex-col items-center justify-center p-8  rounded-3xl shadow-xl space-y-4">
+          <div className="text-5xl animate__animated animate__fadeIn">
+            <FiLock className="inline-block text-7xl mb-3" />
+          </div>
+          <p className="text-2xl font-bold mb-2 animate__animated animate__fadeIn animate__delay-1s">
+            You must be logged in to post a job
+          </p>
+          <p className="text-base  opacity-90 animate__animated animate__fadeIn animate__delay-2s text-center">
+            Please log in to access the job posting feature.
+          </p>
         </div>
       ) : (
         <div className="w-full max-w-4xl  border border-[#FF5722] p-4 sm:p-8 rounded-xl shadow-lg">
