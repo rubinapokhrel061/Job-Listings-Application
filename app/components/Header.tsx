@@ -41,6 +41,7 @@ export default function Header() {
             <form action={() => signOut()}>
               <button
                 type="submit"
+                onClick={() => localStorage.removeItem("user")}
                 className="bg-gray-200 rounded-full shadow-lg text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-2 md:px-4 "
               >
                 LogOut

@@ -1,17 +1,18 @@
 "use client";
 import HeroSec from "@/app/components/HeroSec";
+import { Status } from "@/app/globals/status";
 import { CreatedBy } from "@/app/globals/types";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchFavouriteJobsByEmail } from "@/app/redux/slices/favouriteJobsSlice";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FiLock } from "react-icons/fi";
+import { FiLoader, FiLock } from "react-icons/fi";
 
 export default function FavouriteJob() {
   const [user, setUser] = useState<CreatedBy | null>(null);
   const dispatch = useAppDispatch();
-  const { FavJobs } = useAppSelector((state) => state.favJob); // Make sure to handle loading and error states
+  const { FavJobs, status } = useAppSelector((state) => state.favJob);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -29,28 +30,10 @@ export default function FavouriteJob() {
     }
   }, [user?.userEmail, dispatch]);
 
-  if (!user) {
-    return (
-      <div className="overflow-y-auto flex items-center justify-center py-10 min-h-screen">
-        <div className="flex flex-col items-center justify-center p-8 rounded-3xl shadow-xl space-y-4">
-          <div className="text-5xl animate__animated animate__fadeIn">
-            <FiLock className="inline-block text-7xl mb-3" />
-          </div>
-          <p className="text-2xl font-bold mb-2 animate__animated animate__fadeIn animate__delay-1s">
-            You must be logged in to see favourite Jobs.
-          </p>
-          <p className="text-base opacity-90 animate__animated animate__fadeIn animate__delay-2s text-center">
-            Please log in to access favourite Jobs.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <HeroSec />
-      <div className="overflow-y-auto flex items-center justify-center ">
+      <div className="overflow-y-auto flex items-center justify-center mb-5">
         <div className="py-8 my-4 grow bg-[#eef2f5] rounded-lg min-h-[300px]">
           <div className="flex justify-between">
             <Link href={`/`}>
@@ -64,7 +47,34 @@ export default function FavouriteJob() {
             </Link>
           </div>
 
-          {FavJobs.length === 0 ? (
+          {!user ? (
+            <>
+              <div className="overflow-y-auto flex items-center justify-center py-10">
+                <div className="flex flex-col items-center justify-center p-8 rounded-3xl shadow-xl space-y-4">
+                  <div className="text-5xl animate__animated animate__fadeIn">
+                    <FiLock className="inline-block text-5xl mb-3" />
+                  </div>
+                  <p className="text-xl font-bold mb-2 animate__animated animate__fadeIn animate__delay-1s">
+                    You must be logged in to see favourite Jobs.
+                  </p>
+                  <p className="text-sm opacity-90 animate__animated animate__fadeIn animate__delay-2s text-center">
+                    Please log in to access favourite Jobs.
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : status === Status.LOADING ? (
+            <>
+              <div
+                role="status"
+                aria-label="loading"
+                className="flex justify-center items-center py-20"
+              >
+                <FiLoader className="animate-spin text-indigo-600 w-6 h-6" />
+                <span className="sr-only">Loading...</span>
+              </div>
+            </>
+          ) : FavJobs.length === 0 ? (
             <p>You have no favourite jobs yet.</p>
           ) : (
             <div>
