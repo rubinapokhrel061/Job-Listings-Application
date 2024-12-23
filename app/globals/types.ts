@@ -31,6 +31,7 @@ export interface JobList {
   description: string;
   requirements: string;
   createdBy: CreatedBy;
+  createdAt?: Date;
 }
 
 export interface JobState {
@@ -42,4 +43,33 @@ export interface JobState {
 export interface JobApplyState {
   jobApply: applyForm[];
   status: Status;
+}
+export interface CreatedBy {
+  userName: string;
+  userId: string;
+  userEmail: string;
+}
+
+export interface Job {
+  _id?: string;
+  companyName: string;
+  companyWebsite?: string;
+  companyLogo?: string;
+  jobPosition: string;
+  location: string;
+  salary?: string;
+  experience: "Entry-Level" | "Mid-Level" | "Senior-Level";
+  jobType: "Full-Time" | "Part-Time" | "Contract";
+  jobMode: "onsite" | "hybrid" | "remote";
+  deadline: Date;
+  description: string;
+  requirements: string;
+  createdBy: CreatedBy;
+}
+
+export interface FavouriteJob {
+  job: Job;
+  favorite: boolean;
+  addedBy: string;
+  createdAt?: Date;
 }

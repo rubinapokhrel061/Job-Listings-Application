@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { formatDistanceToNow } from "date-fns";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useEffect } from "react";
 import { fetchJobs } from "../redux/slices/jobSlice";
@@ -13,7 +13,18 @@ export default function JobList() {
   }, []);
   return (
     <div className="py-8 my-4 grow bg-[#eef2f5]  rounded-lg min-h-[300px]">
-      <h1 className="mx-4 md:m-6 font-bold">Recent Jobs..</h1>
+      <div className="flex justify-between">
+        <Link href={`/`}>
+          <h1 className="mx-4 md:m-6 font-bold">Recent Jobs..</h1>
+        </Link>
+
+        <Link href={"/views/favourite-jobs"}>
+          <h1 className="mx-4 md:m-6 text-[#FF5722] font-bold">
+            Favourite Jobs
+          </h1>
+        </Link>
+      </div>
+
       {joblist.map((job, index) => {
         return (
           <Link
@@ -55,8 +66,14 @@ export default function JobList() {
                 </div>
               </div>
             </div>
-            <div className="flex md:flex-col  md:gap-8 text-sm pb-2 gap-2 justify-between md:items-center md:justify-center pt-1 md:p-4">
-              <div className="md:order-2"> 2 weeks ago</div>
+            <div className="flex  text-sm pb-2 gap-2 items-center justify-end pt-1 md:p-4">
+              <div className="">
+                {job?.createdAt
+                  ? formatDistanceToNow(new Date(job.createdAt), {
+                      addSuffix: true,
+                    })
+                  : ""}
+              </div>
             </div>
           </Link>
         );

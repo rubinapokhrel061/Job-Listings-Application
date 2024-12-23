@@ -107,7 +107,7 @@ export default function CreateNewJob() {
   };
 
   return (
-    <div className="overflow-y-auto flex items-center justify-center py-6 min-h-screen">
+    <div className="overflow-y-auto flex items-center justify-center py-10 min-h-screen">
       {!user ? (
         <div className="flex flex-col items-center justify-center p-8  rounded-3xl shadow-xl space-y-4">
           <div className="text-5xl animate__animated animate__fadeIn">
@@ -354,7 +354,7 @@ export default function CreateNewJob() {
             </div>
             <button
               type="submit"
-              className="w-full bg-[#FF5722] text-white py-2 rounded-md hover:bg-[#ff5622f5] outline-none"
+              className="inline-flex items-center justify-center w-full h-12 px-10 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-md "
             >
               Post Job
             </button>

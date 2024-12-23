@@ -1,5 +1,6 @@
 "use client";
 import SearchIcon from "@mui/icons-material/Search";
+
 export default function HeroSec() {
   return (
     <section className="pt-20 pb-6">

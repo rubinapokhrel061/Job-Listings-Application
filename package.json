@@ -18,6 +18,7 @@
     "@workos-inc/node": "^7.35.1",
     "axios": "^1.7.9",
     "cloudinary": "^2.5.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.1",

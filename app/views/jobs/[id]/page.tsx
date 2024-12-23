@@ -1,25 +1,68 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { CreatedBy, FavouriteJob, Job } from "@/app/globals/types";
+import {
+  addToFavourites,
+  removeFromFavourites,
+} from "@/app/redux/slices/favouriteJobsSlice";
 import { fetchJobById } from "@/app/redux/slices/jobSlice";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect } from "react";
 
 export default function JobDetails() {
   const { id } = useParams();
   const { singleJob } = useAppSelector((state) => state.jobs);
+  const { FavJobs } = useAppSelector((state) => state.favJob);
   const dispatch = useAppDispatch();
 
-  const formatDate = (dateString: any) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString("en-US", options);
-  };
+  const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
     if (id) {
       dispatch(fetchJobById(id));
     }
   }, [dispatch, id]);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      const parsedUser: CreatedBy = JSON.parse(user);
+      setUserEmail(parsedUser.userEmail);
+    }
+  }, []);
+
+  const formatDate = (dateString: any) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  };
+
+  const isFavorite =
+    singleJob &&
+    FavJobs.some((favJob: FavouriteJob) => favJob.job._id === singleJob._id);
+
+  const handleClick = async () => {
+    if (!userEmail) {
+      console.error("User email is not available.");
+      return;
+    }
+
+    const favJobData: FavouriteJob = {
+      job: singleJob!,
+      favorite: !isFavorite,
+      addedBy: userEmail,
+    };
+
+    if (isFavorite) {
+      await dispatch(removeFromFavourites(singleJob?._id as string, userEmail));
+    } else {
+      await dispatch(addToFavourites(favJobData));
+    }
+  };
+
+  if (!singleJob) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="py-10">
@@ -120,15 +163,23 @@ export default function JobDetails() {
             </div>
           </div>
         </div>
-        <div>
-          <Link
-            href={`/views/job-apply/${singleJob?._id}`}
-            className="inline-flex items-center justify-center h-12 px-10 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-md "
-            prefetch={false}
-          >
-            Apply for this job
-          </Link>
-        </div>
+      </div>
+      <div className="flex justify-between mt-8 gap-4">
+        <button
+          onClick={handleClick}
+          className={`inline-flex items-center justify-center h-12 px-2 text-sm font-semibold text-white ${
+            isFavorite ? "bg-red-500" : "bg-[#FF5722]"
+          } rounded-md shadow-md`}
+        >
+          {isFavorite ? "Remove from favourites" : "Add to favourites"}
+        </button>
+        <Link
+          href={`/views/job-apply/${singleJob?._id}`}
+          className="inline-flex items-center justify-center h-12 px-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-md"
+          prefetch={false}
+        >
+          Apply for this job
+        </Link>
       </div>
     </div>
   );
