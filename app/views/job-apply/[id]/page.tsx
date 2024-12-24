@@ -19,7 +19,6 @@ export default function JobApplicationForm() {
   const { id } = useParams();
   const { singleJob } = useAppSelector((state) => state.jobs);
 
-  // Initialize jobDetails with a fallback
   const [jobDetails, setJobDetails] = useState<jobdetails>({
     jobId: "",
     jobPosition: "",

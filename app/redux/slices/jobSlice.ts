@@ -5,6 +5,9 @@ import { AppDispatch } from "../store";
 import { API } from "@/app/http";
 import { toast } from "react-toastify";
 
+interface DeleteJob {
+  jobId: string;
+}
 const initialState: JobState = {
   jobs: [],
   status: Status.LOADING,
@@ -12,6 +15,7 @@ const initialState: JobState = {
   totalJobs: 0,
   totalPages: 0,
   currentPage: 1,
+  jobByEmail: [],
 };
 
 const jobSlice = createSlice({
@@ -20,6 +24,9 @@ const jobSlice = createSlice({
   reducers: {
     setJobs(state: JobState, action: PayloadAction<JobList[]>) {
       state.jobs = action.payload;
+    },
+    setJobByEmail(state: JobState, action: PayloadAction<JobList[]>) {
+      state.jobByEmail = action.payload;
     },
     setStatus(state: JobState, action: PayloadAction<Status>) {
       state.status = action.payload;
@@ -36,6 +43,20 @@ const jobSlice = createSlice({
     setCurrentPage(state: JobState, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
+    setDeleteJob(state: JobState, action: PayloadAction<DeleteJob>) {
+      const index = state.jobByEmail.findIndex(
+        (item) => (item._id = action.payload.jobId)
+      );
+      state.jobByEmail.splice(index, 1);
+    },
+    setUpdateJob(state: JobState, action: PayloadAction<JobList>) {
+      const index = state.jobByEmail.findIndex(
+        (item) => (item._id = action.payload._id)
+      );
+      if (index !== -1) {
+        state.jobByEmail[index] = action.payload;
+      }
+    },
   },
 });
 
@@ -46,6 +67,8 @@ export const {
   setCurrentPage,
   setTotalJobs,
   setTotalPages,
+  setJobByEmail,
+  setDeleteJob,
 } = jobSlice.actions;
 export default jobSlice.reducer;
 
@@ -119,7 +142,7 @@ export function fetchJobs(page: number = 1) {
     }
   };
 }
-export function fetchJobById(jobId: any) {
+export function fetchJobById(jobId: string) {
   return async function fetchJobByIdThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.LOADING));
     try {
@@ -134,6 +157,64 @@ export function fetchJobById(jobId: any) {
       }
     } catch (error: any) {
       dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+export function fetchJobByemail(email: string) {
+  return async function fetchJobByIdThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
+    try {
+      const response = await API.get(`/jobs/email/${email}`);
+      if (response.status === 200) {
+        const { job } = response.data;
+        dispatch(setStatus(Status.SUCCESS));
+        dispatch(setJobByEmail(job));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error: any) {
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+export function updateJob({ id, jobData }: { id: string; jobData: JobList }) {
+  return async function addJobThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
+    try {
+      const response = await API.post(`/jobs/${id}`, jobData);
+
+      if (response.status === 201) {
+        dispatch(setStatus(Status.SUCCESS));
+        toast.success(response?.data?.message);
+        dispatch(setJobByEmail(response.data));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+      return response;
+    } catch (error: any) {
+      dispatch(setStatus(Status.ERROR));
+      toast.error(error.response?.data?.message);
+    }
+  };
+}
+export function deleteJob(jobId: string) {
+  return async function fetchJobByIdThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
+    try {
+      const response = await API.delete(`/jobs/${jobId}`);
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+        dispatch(setDeleteJob({ jobId: jobId }));
+        toast.success(response?.data?.message);
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error: any) {
+      dispatch(setStatus(Status.ERROR));
+      toast.error(error.response?.data?.message);
     }
   };
 }

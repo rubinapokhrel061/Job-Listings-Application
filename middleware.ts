@@ -8,5 +8,6 @@ export const config = {
     "/views/jobs/:id",
     "/views/job-apply/:id",
     "/views/favourite-jobs",
+    "/views/profile",
   ],
 };

@@ -1,26 +1,53 @@
 "use client";
 
+import { FaUserCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getSignInUrl, signOut, withAuth } from "@workos-inc/authkit-nextjs";
 import Link from "next/link";
+import { FiChevronDown } from "react-icons/fi";
+
+interface User {
+  profilePictureUrl?: string;
+}
 
 export default function Header() {
-  const [user, setUser] = useState(null);
-  const [signInUrl, setSignInUrl] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const [signInUrl, setSignInUrl] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     const fetchAuthData = async () => {
       try {
         const authData = await withAuth();
-        setUser(authData.user);
+        setUser(authData.user as User);
         const url = await getSignInUrl();
         setSignInUrl(url);
+
+        if (authData.user && authData.user.profilePictureUrl) {
+          localStorage.setItem(
+            "profilePictureUrl",
+            authData.user.profilePictureUrl
+          );
+        }
       } catch (error) {
         console.error("Error fetching auth data:", error);
       }
     };
     fetchAuthData();
   }, []);
+
+  const profilePictureUrl =
+    user?.profilePictureUrl || localStorage.getItem("profilePictureUrl");
+
+  const handleSignOut = async () => {
+    await signOut();
+    localStorage.removeItem("user");
+    localStorage.removeItem("profilePictureUrl"); // Clear the profile picture URL when logging out
+  };
 
   return (
     <header>
@@ -32,25 +59,65 @@ export default function Header() {
           {!user && (
             <Link
               href={signInUrl}
-              className="bg-white rounded-full shadow-lg hover:text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-2 md:px-4"
+              className="bg-white rounded-full shadow-lg hover:text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-3 md:px-4"
             >
               LogIn
             </Link>
           )}
           {user && (
-            <form action={() => signOut()}>
+            <div className="dropdown relative inline-flex">
               <button
-                type="submit"
-                onClick={() => localStorage.removeItem("user")}
-                className="bg-gray-200 rounded-full shadow-lg text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-2 md:px-4 "
+                type="button"
+                onClick={toggleDropdown}
+                className="dropdown-toggle flex gap-1 items-center bg-gray-200 shadow-lg text-[#388E3C] text-sm sm:text-lg font-serif py-2 px-3 md:px-4 rounded-full cursor-pointer"
               >
-                LogOut
+                Profile
+                <FiChevronDown
+                  className={`w-3 h-3 transition-transform duration-300 ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-            </form>
+              {isOpen && (
+                <div
+                  id="dropdown-default"
+                  className="dropdown-menu flex flex-col justify-center items-center rounded-xl shadow-lg bg-white absolute top-full w-32 mt-2"
+                >
+                  <ul className="py-2">
+                    <Link href={"/views/profile"}>
+                      <li
+                        className="flex gap-1 py-2 px-2 md:px-4"
+                        onClick={toggleDropdown}
+                      >
+                        <p>Profile</p>
+                        {profilePictureUrl ? (
+                          <img
+                            src={profilePictureUrl}
+                            alt="Profile"
+                            className="w-6 h-6 rounded-full"
+                          />
+                        ) : (
+                          <FaUserCircle className="w-6 text-[#FF5722] h-6" />
+                        )}
+                      </li>
+                    </Link>
+                    <li>
+                      <button
+                        type="button"
+                        onClick={handleSignOut}
+                        className=" text-sm sm:text-lg text-[#FF5722] font-serif py-2 px-2 md:px-4"
+                      >
+                        LogOut
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           )}
           <Link
             href={"/views/new-job"}
-            className="bg-[#FF5722] rounded-full shadow-lg text-sm sm:text-lg font-serif py-2 px-2 md:px-4 "
+            className="bg-[#FF5722] rounded-full shadow-lg text-sm sm:text-lg font-serif py-2 px-2 md:px-4"
           >
             Post a Job
           </Link>

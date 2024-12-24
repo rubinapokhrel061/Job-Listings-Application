@@ -41,6 +41,7 @@ export interface JobState {
   totalJobs: number;
   totalPages: number;
   currentPage: number;
+  jobByEmail: JobList[];
 }
 
 export interface JobApplyState {

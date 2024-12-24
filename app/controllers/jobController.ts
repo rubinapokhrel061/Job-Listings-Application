@@ -155,6 +155,64 @@ export const getAllJob = async (
   }
 };
 
+// Get Single Job
+export const getSingleJob = async (
+  req: Request,
+  { params }: { params: { id: string } }
+) => {
+  try {
+    await connectToDatabase();
+    const { id } = await params;
+    const job = await Job.findById(id);
+    console.log(id);
+    if (!job) {
+      return NextResponse.json({ message: "Job not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "Job retrieved successfully", job },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("Error fetching job:", error);
+    return NextResponse.json(
+      { message: "Error fetching job", error: error.message },
+      { status: 500 }
+    );
+  }
+};
+//get jobs by email
+export const getJobByEmail = async (
+  req: Request,
+  { params }: { params: { email: string } }
+) => {
+  try {
+    await connectToDatabase();
+
+    const { email } = params;
+
+    const job = await Job.find({ "createdBy.userEmail": email });
+
+    if (!job) {
+      return NextResponse.json(
+        { message: "Job not found for this email" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Job retrieved successfully", job },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("Error fetching job:", error);
+    return NextResponse.json(
+      { message: "Error fetching job", error: error.message },
+      { status: 500 }
+    );
+  }
+};
+
 // Delete Job by ID
 export const deleteJobByID = async (
   req: Request,

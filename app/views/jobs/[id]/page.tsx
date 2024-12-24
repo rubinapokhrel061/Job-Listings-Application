@@ -37,7 +37,7 @@ export default function JobDetails() {
 
   const formatDate = (dateString: any) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString("en-US", options);
+    return new Date(dateString).toLocaleDateString("en-US", options as any);
   };
 
   const isFavorite =
