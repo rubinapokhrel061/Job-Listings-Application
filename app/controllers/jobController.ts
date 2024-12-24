@@ -74,51 +74,82 @@ export const createJob = async (req: Request) => {
 };
 
 // Get All Jobs
-export const getAllJob = async (req: Request) => {
+// export const getAllJob = async (req: Request) => {
+//   try {
+//     await connectToDatabase();
+
+//     const jobs = await Job.find({});
+
+//     if (jobs.length === 0) {
+//       return NextResponse.json({ message: "No jobs found" }, { status: 404 });
+//     }
+
+//     return NextResponse.json(
+//       { message: "Jobs retrieved successfully", jobs },
+//       { status: 200 }
+//     );
+//   } catch (error: any) {
+//     console.error("Error fetching jobs:", error);
+//     return NextResponse.json(
+//       { message: "Error fetching jobs", error: error.message },
+//       { status: 500 }
+//     );
+//   }
+// };
+
+// Get All Jobs with Pagination
+export const getAllJob = async (
+  req: Request,
+  context: { params: { page: string; limit: string } }
+) => {
   try {
+    console.log(context.params); // Log params for debugging
+    const { page, limit } = context.params;
+
+    // Parse page and limit as integers
+    const parsedPage = parseInt(page, 10);
+    const parsedLimit = parseInt(limit, 10);
+
+    // Validate page and limit
+    if (isNaN(parsedPage) || parsedPage < 1) {
+      return NextResponse.json(
+        { message: "Invalid page number" },
+        { status: 400 }
+      );
+    }
+    if (isNaN(parsedLimit) || parsedLimit < 1) {
+      return NextResponse.json(
+        { message: "Invalid limit number" },
+        { status: 400 }
+      );
+    }
+
+    const skip = (parsedPage - 1) * parsedLimit;
+
     await connectToDatabase();
 
-    const jobs = await Job.find({});
+    const jobs = await Job.find({}).skip(skip).limit(parsedLimit);
+    const totalJobs = await Job.countDocuments(); // Total number of jobs in the collection
+    const totalPages = Math.ceil(totalJobs / parsedLimit); // Calculate total pages based on total jobs
 
     if (jobs.length === 0) {
       return NextResponse.json({ message: "No jobs found" }, { status: 404 });
     }
 
     return NextResponse.json(
-      { message: "Jobs retrieved successfully", jobs },
+      {
+        message: "Jobs retrieved successfully",
+        jobs,
+        totalJobs,
+        totalPages,
+        currentPage: parsedPage,
+      },
       { status: 200 }
     );
   } catch (error: any) {
     console.error("Error fetching jobs:", error);
     return NextResponse.json(
       { message: "Error fetching jobs", error: error.message },
-      { status: 500 }
-    );
-  }
-};
-
-// Get Single Job
-export const getSingleJob = async (
-  req: Request,
-  { params }: { params: { id: string } }
-) => {
-  try {
-    await connectToDatabase();
-    const { id } = await params;
-    const job = await Job.findById(id);
-    console.log(id);
-    if (!job) {
-      return NextResponse.json({ message: "Job not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(
-      { message: "Job retrieved successfully", job },
-      { status: 200 }
-    );
-  } catch (error: any) {
-    console.error("Error fetching job:", error);
-    return NextResponse.json(
-      { message: "Error fetching job", error: error.message },
       { status: 500 }
     );
   }

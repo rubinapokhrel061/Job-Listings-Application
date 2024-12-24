@@ -9,6 +9,9 @@ const initialState: JobState = {
   jobs: [],
   status: Status.LOADING,
   singleJob: null,
+  totalJobs: 0,
+  totalPages: 0,
+  currentPage: 1,
 };
 
 const jobSlice = createSlice({
@@ -24,10 +27,26 @@ const jobSlice = createSlice({
     setSingleJob(state: JobState, action: PayloadAction<JobList>) {
       state.singleJob = action.payload;
     },
+    setTotalJobs(state: JobState, action: PayloadAction<number>) {
+      state.totalJobs = action.payload;
+    },
+    setTotalPages(state: JobState, action: PayloadAction<number>) {
+      state.totalPages = action.payload;
+    },
+    setCurrentPage(state: JobState, action: PayloadAction<number>) {
+      state.currentPage = action.payload;
+    },
   },
 });
 
-export const { setJobs, setStatus, setSingleJob } = jobSlice.actions;
+export const {
+  setJobs,
+  setStatus,
+  setSingleJob,
+  setCurrentPage,
+  setTotalJobs,
+  setTotalPages,
+} = jobSlice.actions;
 export default jobSlice.reducer;
 
 export function addJob(formData: JobList) {
@@ -48,18 +67,46 @@ export function addJob(formData: JobList) {
     }
   };
 }
-export function fetchJobs() {
+
+// export function fetchJobs() {
+//   return async function fetchJobsThunk(dispatch: AppDispatch) {
+//     dispatch(setStatus(Status.LOADING));
+
+//     try {
+//       const response = await API.get("/jobs");
+//       console.log(response);
+
+//       if (response.status === 200 && response.data) {
+//         const jobs = response.data.jobs;
+//         dispatch(setStatus(Status.SUCCESS));
+//         dispatch(setJobs(jobs));
+//       } else {
+//         dispatch(setStatus(Status.ERROR));
+//         toast.error("Failed to fetch jobs.");
+//       }
+//     } catch (error: any) {
+//       const errorMessage =
+//         error?.response?.data?.message || "Something went wrong";
+//       toast.error(errorMessage);
+//       dispatch(setStatus(Status.ERROR));
+//     }
+//   };
+// }
+export function fetchJobs(page: number = 1) {
   return async function fetchJobsThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.LOADING));
 
     try {
-      const response = await API.get("/jobs");
-      console.log(response);
+      const limit = 5;
+      const response = await API.get(`/jobs/all-Job/${page}/${limit}`);
 
       if (response.status === 200 && response.data) {
-        const jobs = response.data.jobs;
+        const { jobs, totalJobs, totalPages } = response.data;
         dispatch(setStatus(Status.SUCCESS));
         dispatch(setJobs(jobs));
+        dispatch(setTotalJobs(totalJobs));
+        dispatch(setTotalPages(totalPages));
+        dispatch(setCurrentPage(page));
       } else {
         dispatch(setStatus(Status.ERROR));
         toast.error("Failed to fetch jobs.");
@@ -72,7 +119,6 @@ export function fetchJobs() {
     }
   };
 }
-
 export function fetchJobById(jobId: any) {
   return async function fetchJobByIdThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.LOADING));

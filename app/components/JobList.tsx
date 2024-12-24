@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -6,16 +5,31 @@ import { useEffect } from "react";
 import { fetchJobs } from "../redux/slices/jobSlice";
 import { Status } from "../globals/status";
 import { FiLoader } from "react-icons/fi";
+
 export default function JobList() {
   const dispatch = useAppDispatch();
-  const { jobs, status } = useAppSelector((state) => state.jobs);
-  const joblist = jobs;
+  const { jobs, status, currentPage, totalPages } = useAppSelector(
+    (state) => state.jobs
+  );
+
   useEffect(() => {
-    dispatch(fetchJobs());
-  }, []);
+    dispatch(fetchJobs(currentPage));
+  }, [dispatch, currentPage]);
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      dispatch(fetchJobs(currentPage - 1));
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      dispatch(fetchJobs(currentPage + 1));
+    }
+  };
 
   return (
-    <div className="py-8 my-4 grow bg-[#eef2f5]  rounded-lg min-h-[300px]">
+    <div className="py-8 my-4 grow bg-[#eef2f5] rounded-lg min-h-[300px]">
       <div className="flex justify-between">
         <Link href={`/`}>
           <h1 className="mx-4 md:m-6 font-bold">Recent Jobs..</h1>
@@ -29,33 +43,31 @@ export default function JobList() {
       </div>
 
       {status === Status.LOADING ? (
-        <>
-          <div
-            role="status"
-            aria-label="loading"
-            className="flex justify-center items-center py-20"
-          >
-            <FiLoader className="animate-spin text-indigo-600 w-6 h-6" />
-            <span className="sr-only">Loading...</span>
-          </div>
-        </>
-      ) : joblist.length === 0 ? (
+        <div
+          role="status"
+          aria-label="loading"
+          className="flex justify-center items-center py-20"
+        >
+          <FiLoader className="animate-spin text-indigo-600 w-6 h-6" />
+          <span className="sr-only">Loading...</span>
+        </div>
+      ) : jobs.length === 0 ? (
         <div className="flex justify-center items-center py-20">
           <p>No jobs found</p>
         </div>
       ) : (
-        joblist.map((job, index) => {
-          return (
+        <>
+          {jobs.map((job, index) => (
             <Link
               href={`/views/jobs/${job._id}`}
               key={index}
-              className="bg-white  flex m-4 md:m-6 flex-col md:flex-row justify-between gap-4 rounded-lg p-4 text-gray-700 shadow hover:shadow-sm"
+              className="bg-white flex m-4 md:m-6 flex-col md:flex-row justify-between gap-4 rounded-lg p-4 text-gray-700 shadow hover:shadow-sm"
             >
               <div className="flex md:gap-5 text-sm sm:text-lg">
-                <div className="relative h-[85px] w-[85px] object-cover rounded-xl m-1 overflow-hidden  order-2 md:order-1 p-2">
+                <div className="relative h-[85px] w-[85px] object-cover rounded-xl m-1 overflow-hidden order-2 md:order-1 p-2">
                   <img
                     src={job.companyLogo}
-                    alt="Invision company logo"
+                    alt="Company Logo"
                     className="h-full w-full object-contain rounded-lg"
                   />
                 </div>
@@ -69,13 +81,13 @@ export default function JobList() {
                   <div className="flex flex-col text-sm sm:text-base gap-1 pt-2 md:flex-row md:gap-2">
                     <span className="text-sm ">
                       Experience:
-                      <span className="bg-green-100  text-green-900 px-2 py-0.5 rounded-full">
+                      <span className="bg-green-100 text-green-900 px-2 py-0.5 rounded-full">
                         {job.experience}
                       </span>
                     </span>
                     <span>
                       Salary:
-                      <span className="bg-blue-100  text-blue-900 px-2 py-0.5 rounded-full">
+                      <span className="bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full">
                         {job.salary}
                       </span>
                     </span>
@@ -85,7 +97,7 @@ export default function JobList() {
                   </div>
                 </div>
               </div>
-              <div className="flex  text-sm pb-2  items-center justify-end  ">
+              <div className="flex text-sm pb-2 items-center justify-end">
                 {job?.createdAt
                   ? formatDistanceToNow(new Date(job.createdAt), {
                       addSuffix: true,
@@ -93,8 +105,28 @@ export default function JobList() {
                   : ""}
               </div>
             </Link>
-          );
-        })
+          ))}
+
+          <div className="flex justify-center gap-4 items-center mx-auto py-4">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="bg-gray-500 active:bg-[#FF5722] px-4 py-2 rounded-md text-white"
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="bg-gray-500 active:bg-[#FF5722] px-4 py-2 rounded-md text-white"
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

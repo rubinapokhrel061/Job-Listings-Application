@@ -38,6 +38,9 @@ export interface JobState {
   jobs: JobList[];
   status: Status;
   singleJob: JobList | null;
+  totalJobs: number;
+  totalPages: number;
+  currentPage: number;
 }
 
 export interface JobApplyState {
