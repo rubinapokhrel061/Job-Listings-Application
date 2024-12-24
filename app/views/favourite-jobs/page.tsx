@@ -1,13 +1,15 @@
-"use client";
-import HeroSec from "@/app/components/HeroSec";
-import { Status } from "@/app/globals/status";
-import { CreatedBy } from "@/app/globals/types";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { fetchFavouriteJobsByEmail } from "@/app/redux/slices/favouriteJobsSlice";
-import { formatDistanceToNow } from "date-fns";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { FiLoader, FiLock } from "react-icons/fi";
+'use client';
+import HeroSec from '@/app/components/HeroSec';
+import { Status } from '@/app/globals/status';
+import { CreatedBy } from '@/app/globals/types';
+import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
+import { fetchFavouriteJobsByEmail } from '@/app/redux/slices/favouriteJobsSlice';
+import { formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { FiLoader, FiLock } from 'react-icons/fi';
+import Image from 'next/image';
+const defaultImage = '/images/defaultImage.jpg';
 
 export default function FavouriteJob() {
   const [user, setUser] = useState<CreatedBy | null>(null);
@@ -15,8 +17,8 @@ export default function FavouriteJob() {
   const { FavJobs, status } = useAppSelector((state) => state.favJob);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const parsedUser: CreatedBy = JSON.parse(storedUser);
         setUser(parsedUser);
@@ -40,10 +42,8 @@ export default function FavouriteJob() {
               <h1 className="mx-4 md:m-6 font-bold">Recent Jobs..</h1>
             </Link>
 
-            <Link href={"/views/favourite-jobs"}>
-              <h1 className="mx-4 md:m-6 text-[#FF5722] font-bold">
-                Favourite Jobs
-              </h1>
+            <Link href={'/views/favourite-jobs'}>
+              <h1 className="mx-4 md:m-6 text-[#FF5722] font-bold">Favourite Jobs</h1>
             </Link>
           </div>
 
@@ -86,10 +86,12 @@ export default function FavouriteJob() {
                 >
                   <div className="flex md:gap-5 text-sm sm:text-lg">
                     <div className="relative h-[85px] w-[85px] object-cover rounded-xl m-1 overflow-hidden  order-2 md:order-1 p-2">
-                      <img
-                        src={favJob.job.companyLogo}
+                      <Image
+                        src={favJob.job.companyLogo || defaultImage}
                         alt="Invision company logo"
-                        className="h-full w-full object-contain rounded-lg"
+                        layout="fill"
+                        objectFit="contain"
+                        className="rounded-lg"
                       />
                     </div>
                     <div className="flex flex-col grow space-y-1 pt-1 md:space-y-0 justify-between order-1 md:order-2">
@@ -114,8 +116,8 @@ export default function FavouriteJob() {
                         </span>
                       </div>
                       <div className="text-gray-500 flex md:pt-2 capitalize flex-wrap text-sm ">
-                        {favJob.job.jobType} &middot; {favJob.job.location}{" "}
-                        &middot; {favJob.job.jobMode}
+                        {favJob.job.jobType} &middot; {favJob.job.location} &middot;{' '}
+                        {favJob.job.jobMode}
                       </div>
                     </div>
                   </div>
@@ -125,7 +127,7 @@ export default function FavouriteJob() {
                         ? formatDistanceToNow(new Date(favJob.createdAt), {
                             addSuffix: true,
                           })
-                        : ""}
+                        : ''}
                     </div>
                   </div>
                 </Link>

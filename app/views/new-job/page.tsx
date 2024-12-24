@@ -1,10 +1,10 @@
-"use client";
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { CldUploadWidget } from "next-cloudinary";
-import { CreatedBy, JobList } from "@/app/globals/types";
-import { useAppDispatch } from "@/app/redux/hooks";
-import { addJob } from "@/app/redux/slices/jobSlice";
-import { FiLock } from "react-icons/fi";
+'use client';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { CldUploadWidget } from 'next-cloudinary';
+import { CreatedBy, JobList } from '@/app/globals/types';
+import { useAppDispatch } from '@/app/redux/hooks';
+import { addJob } from '@/app/redux/slices/jobSlice';
+import { FiLock } from 'react-icons/fi';
 
 interface CloudinaryResponse {
   secure_url: string;
@@ -16,29 +16,29 @@ interface CloudinaryResponse {
 export default function CreateNewJob() {
   const dispatch = useAppDispatch();
   const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-  const [companyLogoName, setCompanyLogoName] = useState<string>("");
-  const [companyLogoUrl, setCompanyLogoUrl] = useState<string>("");
+  const [companyLogoName, setCompanyLogoName] = useState<string>('');
+  const [companyLogoUrl, setCompanyLogoUrl] = useState<string>('');
   const [user, setUser] = useState<CreatedBy | null>(null);
 
   const [formData, setFormData] = useState<JobList>({
-    companyName: "",
-    companyWebsite: "",
+    companyName: '',
+    companyWebsite: '',
     companyLogo: companyLogoUrl,
-    jobPosition: "",
-    location: "",
-    salary: "",
-    experience: "Entry-Level",
-    jobType: "Full-Time",
-    jobMode: "onsite",
+    jobPosition: '',
+    location: '',
+    salary: '',
+    experience: 'Entry-Level',
+    jobType: 'Full-Time',
+    jobMode: 'onsite',
     deadline: new Date(),
-    description: "",
-    requirements: "",
-    createdBy: user ? user : { userName: "", userId: "", userEmail: "" },
+    description: '',
+    requirements: '',
+    createdBy: user ? user : { userName: '', userId: '', userEmail: '' },
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const parsedUser: CreatedBy = JSON.parse(storedUser);
         setUser(parsedUser);
@@ -73,9 +73,7 @@ export default function CreateNewJob() {
   const handleUploadSuccess = ({ info }: { info: CloudinaryResponse }) => {
     if (info && info?.secure_url) {
       setCompanyLogoUrl(info?.secure_url);
-      setCompanyLogoName(
-        info?.display_name ? `${info?.display_name}.${info?.format}` : ""
-      );
+      setCompanyLogoName(info?.display_name ? `${info?.display_name}.${info?.format}` : '');
     }
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -84,26 +82,26 @@ export default function CreateNewJob() {
     const jobData = {
       ...formData,
     };
-    console.log("Form Data Submitted:", jobData);
+    console.log('Form Data Submitted:', jobData);
     await dispatch(addJob(jobData));
 
     setFormData({
-      companyName: "",
-      companyWebsite: "",
+      companyName: '',
+      companyWebsite: '',
       companyLogo: companyLogoUrl,
-      jobPosition: "",
-      location: "",
-      salary: "",
-      experience: "Entry-Level",
-      jobType: "Full-Time",
-      jobMode: "onsite",
+      jobPosition: '',
+      location: '',
+      salary: '',
+      experience: 'Entry-Level',
+      jobType: 'Full-Time',
+      jobMode: 'onsite',
       deadline: new Date(),
-      description: "",
-      requirements: "",
-      createdBy: user ? user : { userName: "", userId: "", userEmail: "" },
+      description: '',
+      requirements: '',
+      createdBy: user ? user : { userName: '', userId: '', userEmail: '' },
     });
-    setCompanyLogoUrl("");
-    setCompanyLogoName("");
+    setCompanyLogoUrl('');
+    setCompanyLogoName('');
   };
 
   return (
@@ -122,16 +120,11 @@ export default function CreateNewJob() {
         </div>
       ) : (
         <div className="w-full max-w-4xl  border border-[#FF5722] p-4 sm:p-8 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-semibold text-[#FF5722] mb-6 text-center">
-            Create New Job
-          </h2>
+          <h2 className="text-2xl font-semibold text-[#FF5722] mb-6 text-center">Create New Job</h2>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label
-                  htmlFor="companyName"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
                   Company Name
                 </label>
                 <input
@@ -146,10 +139,7 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="companyWebsite"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="companyWebsite" className="block text-sm font-medium text-gray-700">
                   Company Website
                 </label>
                 <input
@@ -163,18 +153,16 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="companyLogo"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="companyLogo" className="block text-sm font-medium text-gray-700">
                   Company Logo
                 </label>
 
                 <CldUploadWidget
                   uploadPreset={UPLOAD_PRESET}
+                  //@ts-expect-error: Cloudinary widget props
                   onSuccess={handleUploadSuccess}
                   onError={(error) => {
-                    console.error("Upload error:", error);
+                    console.error('Upload error:', error);
                   }}
                 >
                   {({ open }) => (
@@ -183,17 +171,14 @@ export default function CreateNewJob() {
                       onClick={() => open()}
                       className="w-full px-2 py-2 mt-1 bg-white border border-gray-400 rounded-lg outline-none focus:border-gray-600"
                     >
-                      {companyLogoUrl ? companyLogoName : "Upload Company Logo"}
+                      {companyLogoUrl ? companyLogoName : 'Upload Company Logo'}
                     </button>
                   )}
                 </CldUploadWidget>
               </div>
 
               <div>
-                <label
-                  htmlFor="jobPosition"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="jobPosition" className="block text-sm font-medium text-gray-700">
                   Job Position
                 </label>
                 <input
@@ -208,10 +193,7 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="location"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
                   Location
                 </label>
                 <input
@@ -226,10 +208,7 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="salary"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="salary" className="block text-sm font-medium text-gray-700">
                   Salary Range
                 </label>
                 <input
@@ -243,10 +222,7 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="experience"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="experience" className="block text-sm font-medium text-gray-700">
                   Experience Level
                 </label>
                 <select
@@ -263,10 +239,7 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="jobType"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="jobType" className="block text-sm font-medium text-gray-700">
                   Job Type
                 </label>
                 <select
@@ -283,10 +256,7 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="jobMode"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="jobMode" className="block text-sm font-medium text-gray-700">
                   Job Mode
                 </label>
                 <select
@@ -303,17 +273,14 @@ export default function CreateNewJob() {
               </div>
 
               <div className="mb-4">
-                <label
-                  htmlFor="deadline"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">
                   Deadline
                 </label>
                 <input
                   type="date"
                   id="deadline"
                   name="deadline"
-                  value={formData.deadline}
+                  value={formData.deadline.toISOString().split('T')[0]}
                   onChange={handleInputChange}
                   className="w-full px-2 py-2 mt-1 border border-gray-400 rounded-lg outline-none focus:border-gray-600"
                   required
@@ -321,10 +288,7 @@ export default function CreateNewJob() {
               </div>
             </div>
             <div className="mb-4">
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                 Job Description
               </label>
               <textarea
@@ -337,10 +301,7 @@ export default function CreateNewJob() {
               ></textarea>
             </div>
             <div className="mb-4">
-              <label
-                htmlFor="requirements"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="requirements" className="block text-sm font-medium text-gray-700">
                 Job Requirements
               </label>
               <textarea

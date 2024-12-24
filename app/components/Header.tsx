@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { FaUserCircle } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { getSignInUrl, signOut, withAuth } from "@workos-inc/authkit-nextjs";
-import Link from "next/link";
-import { FiChevronDown } from "react-icons/fi";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { FaUserCircle } from 'react-icons/fa';
+import { FiChevronDown } from 'react-icons/fi';
+import { getSignInUrl, signOut, withAuth } from '@workos-inc/authkit-nextjs';
 
 interface User {
   profilePictureUrl?: string;
@@ -12,8 +13,9 @@ interface User {
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
-  const [signInUrl, setSignInUrl] = useState<string>("");
+  const [signInUrl, setSignInUrl] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -27,32 +29,35 @@ export default function Header() {
         const url = await getSignInUrl();
         setSignInUrl(url);
 
-        if (authData.user && authData.user.profilePictureUrl) {
-          localStorage.setItem(
-            "profilePictureUrl",
-            authData.user.profilePictureUrl
-          );
+        if (authData.user?.profilePictureUrl) {
+          localStorage.setItem('profilePictureUrl', authData.user.profilePictureUrl);
+          setProfilePictureUrl(authData.user.profilePictureUrl); // Set state directly
         }
       } catch (error) {
-        console.error("Error fetching auth data:", error);
+        console.error('Error fetching auth data:', error);
       }
     };
-    fetchAuthData();
-  }, []);
 
-  const profilePictureUrl =
-    user?.profilePictureUrl || localStorage.getItem("profilePictureUrl");
+    fetchAuthData();
+
+    // Check local storage for profile picture URL after mount
+    const storedProfilePictureUrl = localStorage.getItem('profilePictureUrl');
+    if (storedProfilePictureUrl) {
+      setProfilePictureUrl(storedProfilePictureUrl);
+    }
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
-    localStorage.removeItem("user");
-    localStorage.removeItem("profilePictureUrl"); // Clear the profile picture URL when logging out
+    localStorage.removeItem('user');
+    localStorage.removeItem('profilePictureUrl'); // Clear profile picture URL when logging out
+    setProfilePictureUrl(null); // Reset state
   };
 
   return (
     <header>
       <div className="container items-center flex justify-between">
-        <Link href={"/"} className="font-bold text-xl">
+        <Link href={'/'} className="font-bold text-xl">
           Job Board
         </Link>
         <nav className="flex gap-2">
@@ -74,7 +79,7 @@ export default function Header() {
                 Profile
                 <FiChevronDown
                   className={`w-3 h-3 transition-transform duration-300 ${
-                    isOpen ? "rotate-180" : ""
+                    isOpen ? 'rotate-180' : ''
                   }`}
                 />
               </button>
@@ -84,17 +89,16 @@ export default function Header() {
                   className="dropdown-menu flex flex-col justify-center items-center rounded-xl shadow-lg bg-white absolute top-full w-32 mt-2"
                 >
                   <ul className="py-2">
-                    <Link href={"/views/profile"}>
-                      <li
-                        className="flex gap-1 py-2 px-2 md:px-4"
-                        onClick={toggleDropdown}
-                      >
+                    <Link href={'/views/profile'}>
+                      <li className="flex gap-1 py-2 px-2 md:px-4" onClick={toggleDropdown}>
                         <p>Profile</p>
                         {profilePictureUrl ? (
-                          <img
+                          <Image
                             src={profilePictureUrl}
                             alt="Profile"
-                            className="w-6 h-6 rounded-full"
+                            width={24}
+                            height={24}
+                            className="rounded-full"
                           />
                         ) : (
                           <FaUserCircle className="w-6 text-[#FF5722] h-6" />
@@ -105,7 +109,7 @@ export default function Header() {
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className=" text-sm sm:text-lg text-[#FF5722] font-serif py-2 px-2 md:px-4"
+                        className="text-sm sm:text-lg text-[#FF5722] font-serif py-2 px-2 md:px-4"
                       >
                         LogOut
                       </button>
@@ -116,7 +120,7 @@ export default function Header() {
             </div>
           )}
           <Link
-            href={"/views/new-job"}
+            href={'/views/new-job'}
             className="bg-[#FF5722] rounded-full shadow-lg text-sm sm:text-lg font-serif py-2 px-2 md:px-4"
           >
             Post a Job
